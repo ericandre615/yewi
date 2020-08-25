@@ -1,0 +1,24 @@
+table.yewi-table {
+  border-collapse: collapse;
+}
+
+table.yewi-table, th.yewi-theader, td.yewi-tdata {
+  border: 1px solid black;
+}
+
+table.yewi-table tfoot.yewi-tfoot {
+}
+
+table.yewi-table th.yewi-theader {
+    vertical-align: top; /* looks better when some headers have filters and some don't */
+}
+
+table.yewi-table th.yewi-theader .yewi-filter {
+    display: block;
+}
+
+table.yewi-table th.yewi-theader .yewi-table-sort {
+    cursor: pointer;
+    margin-left: .75em;
+    font-size: .75em;
+}
