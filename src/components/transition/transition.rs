@@ -137,14 +137,15 @@ impl Component for Transition {
         false // true == potential infinite loop
     }
 
-    fn change(&mut self, _props: Self::Properties) -> ShouldRender {
-        //if self.props != props {
-        //    self.props = props;
-        //    true
-        //} else {
-        //    false
-        //}
-        false
+    fn change(&mut self, props: Self::Properties) -> ShouldRender {
+        if self.props != props {
+            self.props = props;
+            true
+        } else {
+            false
+        }
+        //false // need to update children when they come in and out, but don't want
+        // to trigger lifecycle/inifite loop
     }
 
     fn rendered(&mut self, first_render: bool) {
@@ -192,6 +193,7 @@ impl Component for Transition {
                 );
                 self.task_entering = Some(Box::new(handle));
             }
+            self.has_entered = true;
         }
     }
 
