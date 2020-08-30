@@ -1,0 +1,18 @@
+.some-list-enter li {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+}
+
+.some-list-entering li {
+    opacity: 1;
+    max-height: 200px;
+    overflow: hidden;
+    transition: opacity 600ms ease-in, max-height 1200ms ease-in-out;
+}
+
+.some-list-entered li{
+    max-height: none;
+    opacity: 1;
+    overflow: initial;
+}
