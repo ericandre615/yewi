@@ -3,10 +3,13 @@
 
 Collection of UI related components for use with the yew framework.
 
+Stand alone working and runable examples for each component are listed under the [`examples`](examples/README.md) directory.
+
 ### Components
-- `Transition`: A basic transition component that tracks transition state and uses callback to emit those states
-- `CSSTransition`: An component utilizing the base `Transition` component that will add css classnames for transition states
-- `Access`: A very simple component to make conditional rendering more declarative
+- [`Transition`](src/components/transition/): A basic transition component that tracks transition state and uses callback to emit those states
+- [`CSSTransition`](src/components/transition/css_transition.rs): An component utilizing the base `Transition` component that will add css classnames for transition states
+- [`Access`](src/components/access.rs): A very simple component to make conditional rendering more declarative
+- [`Table`](src/components/table/): A data table that allows filtering/sorting (remotely)
 
 #### `CSSTransition`
 Note that durations given here must match those the transition times in your `css`
@@ -98,4 +101,82 @@ impl Component for YourComponent {
         }
     }
 }
+```
+
+### Table
+Table takes 2 `Properties` a `columns` prop that is a description of each column (header, field, etc) and
+a `data` prop which is the data in `JSON` (`Serialize/Deserialize`) format. 2 handler props include
+`onfilter` and `onsort`. No actual filtering or sorting happens internally in the `Table` Component. It
+is up to the user to filter data based on the `field` and `value` of the filter or sort. Typically this would involve
+using the parent component's `ComponentLink` callback with the parent components `Messages` enum.
+
+Basic Usage will look like this. For a full working examples please see [`examples/table`](examples/table)
+```
+<Table
+    columns=columns
+    data=data
+    onfilter=self.link.callback(AppMsg::FilterData)
+    onsort=self.link.callback(AppMsg::SortData)
+/>
+```
+Where columns are a `vec` of [`Column`](src/components/table/columns.rs)
+An important field here is the `accessor` field, which is optional. If it is `None`
+then it does a simple property access on the data for the `field` property. However,
+if you give `accessor` `Some(Accessor::callback)` it hands you the `row` data and allows you
+to do something as simple as combining two fields for display. Like `name` using `first_name + last_name`
+or anything as complex as return buttons, inputs, tables, other custom components, etc. by returning `html`. 
+
+```
+use yewi::components::table::{Columns, Column};
+
+let columns: Columns = vec![
+    Column {
+        field: String::from("name"),
+        header_key: None,
+        filter: ColumnFilter::Empty,
+        width: CSSWidth::Px(200.0),
+        ..Default::default()
+    },
+    Column {
+        field: String::from(""),
+        accessor: Some(Accessor::callback(|row| {
+            let data: UserData = serde_json::from_value(row).unwrap();
+            html! { <button id=data.id>{ "Remove" }</button> }
+        })),
+        ..Default::default()
+    },
+];
+```
+```
+let data =
+```
+
+`onfilter` prop is optional
+
+```
+#[prop_or(Callback::noop())]
+pub onfilter: Callback<(String, String)>,
+```
+```
+pub enum Msg {
+    FilterData((String, String))
+};
+
+let onfilter = self.link.callback(Msg::FilterData);
+```
+
+`onsort` prop is also optional. 
+
+```
+use yewi::components::table::columns::{Sort};
+
+#[prop_or(Callback::noop())]
+pub onsort: Callback<(Sort, String)>
+```
+
+```
+pub enum Msg {
+    SortData((Sort, String))
+}
+let onsort = self.link.callback(Msg::SortData);
 ```
