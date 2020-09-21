@@ -188,7 +188,7 @@ let onsort = self.link.callback(Msg::SortData);
 This component will render html. One common use-case example for this is rendering from Markdown to Html using something like `comrak.rs`.
 It has 3 properties 
 - `classes` for a string of css class names
-- `element` which is a string of the element (ex. `div`, `span`, `section`) to render. Defaults to `div`
+- `element` which is a `Tag` enum to render as the parent. Defaults to Tag::Div
 - `html` the html string to render
 
 ```
@@ -197,7 +197,7 @@ use yewi::components::InnerHtml;
 fn view(&self) -> Html {
     html! {
         <InnerHtml
-            element="section"
+            element=Tag::Section
             classes="dangerouslySetInnerHtml"
             html=r#"
                 <h2>Headline</h2>

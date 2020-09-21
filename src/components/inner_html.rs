@@ -10,10 +10,12 @@ use yew::{
 use yew::virtual_dom::VNode;
 use web_sys::Node;
 
+use crate::html::Tag;
+
 #[derive(Properties, Debug, Clone, PartialEq)]
 pub struct Props {
-    #[prop_or(String::from("div"))]
-    pub element: String,
+    #[prop_or_default]
+    pub element: Tag,
     #[prop_or(String::from("<!-- no html -->"))]
     pub html: String,
     #[prop_or(String::new())]
@@ -56,11 +58,12 @@ impl InnerHtml {
     fn render_html(&self) -> Html {
         let content = &self.props.html;
         let classes = &self.props.classes;
+        let tag = &self.props.element.as_html_str();
         let element = web_sys::window()
             .unwrap()
             .document()
             .unwrap()
-            .create_element(&self.props.element)
+            .create_element(tag)
             .unwrap();
         element.class_list().add_1(classes).unwrap();
         element.set_inner_html(content);
