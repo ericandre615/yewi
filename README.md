@@ -10,6 +10,7 @@ Stand alone working and runable examples for each component are listed under the
 - [`CSSTransition`](src/components/transition/css_transition.rs): An component utilizing the base `Transition` component that will add css classnames for transition states
 - [`Access`](src/components/access.rs): A very simple component to make conditional rendering more declarative
 - [`Table`](src/components/table/): A data table that allows filtering/sorting (remotely)
+- [`InnerHtml`](src/components/inner_html.rs): A component that can take raw html and render it properly
 
 #### `CSSTransition`
 Note that durations given here must match those the transition times in your `css`
@@ -40,7 +41,7 @@ For instance, mount will add `*-appear` then immediately remove `*-appear` and a
 
 _Examples_
 
-### CSSTransition
+#### CSSTransition
 Basic Fade-in
 
 Rust .rs
@@ -74,7 +75,7 @@ CSS .css
 .hello-appeared { opacity: 1; }
 ```
 
-### Access
+#### Access
 Access takes one prop `access` which is a `boolean` and wraps some `children`.
 If `access` prop evaluates to `true` the children are rendered. If `access` evaluates
 to `false` children are not renderer.
@@ -103,7 +104,7 @@ impl Component for YourComponent {
 }
 ```
 
-### Table
+#### Table
 Table takes 2 `Properties` a `columns` prop that is a description of each column (header, field, etc) and
 a `data` prop which is the data in `JSON` (`Serialize/Deserialize`) format. 2 handler props include
 `onfilter` and `onsort`. No actual filtering or sorting happens internally in the `Table` Component. It
@@ -183,6 +184,30 @@ pub enum Msg {
 let onsort = self.link.callback(Msg::SortData);
 ```
 
+#### InnerHtml
+This component will render html. One common use-case example for this is rendering from Markdown to Html using something like `comrak.rs`.
+It has 3 properties 
+- `classes` for a string of css class names
+- `element` which is a string of the element (ex. `div`, `span`, `section`) to render. Defaults to `div`
+- `html` the html string to render
+
+```
+use yewi::components::InnerHtml;
+
+fn view(&self) -> Html {
+    html! {
+        <InnerHtml
+            element="section"
+            classes="dangerouslySetInnerHtml"
+            html=r#"
+                <h2>Headline</h2>
+                <p>Some inner html content</p>
+            "#
+        />
+    }
+}
+```
+
 ### Non Components
 #### Html
 `use yewi::html::Tag` currently has a `Tag` module that is a enum with many utility functions for dealing
@@ -232,3 +257,4 @@ percent.as_css_str(); // returns "50.0%"
 px.as_value(); // returns 200.0
 percent.as_value(); // returns 50.0
 ```
+
