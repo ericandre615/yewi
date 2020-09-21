@@ -147,6 +147,7 @@ let columns: Columns = vec![
     },
 ];
 ```
+
 ```
 let data =
 ```
@@ -157,6 +158,7 @@ let data =
 #[prop_or(Callback::noop())]
 pub onfilter: Callback<(String, String)>,
 ```
+
 ```
 pub enum Msg {
     FilterData((String, String))
@@ -179,4 +181,54 @@ pub enum Msg {
     SortData((Sort, String))
 }
 let onsort = self.link.callback(Msg::SortData);
+```
+
+### Non Components
+#### Html
+`use yewi::html::Tag` currently has a `Tag` module that is a enum with many utility functions for dealing
+with valid html elements. Default is `Tag::Div`
+
+Basic usage. You can use the enum variante directly or use the `From` implementation to try and create a new enum.
+```
+let section = Tag::from("section"); // casing does not matter here;
+let header = Tag::Header;
+// etc.
+```
+
+The `Tag` functions include 
+- `as_html_str()`: getting a string representation of the element (all lowercase)
+- `is_element(&str) -> bool`: returns a bool is the string (can be any casing) matches the `Tag` 
+- `is_tag(Tag) -> bool`: same as `is_element` but compares against another `Tag` variant rather than a string
+
+```
+let section = Tag::Section;
+section.as_html_str(); // return "section"
+
+section.is_element("SECTION"); // true
+section.is_element("div"); // false
+
+section.is_tag(Tag::Section); // true
+section.is_tag(Tag::Paragraph); // false
+```
+
+#### Styles
+Styles will contain css utilities. Current we have `dimension` which is a enum for various dimension related CSS values
+such as `px`, `%`, `em`, etc. Currently all enum variants take in an `f32` value. 4 basic operators are implemented for 
+each one to do math on the types. `Div`, `Sub`, `Add`, `Mul`. After the value is calculated it will come back as the type that is calling the operations (or as the first type).
+
+`use yewi::styles::CSSDimension`
+
+Functions include
+- `as_css_str`: will return a string with the `f32` value and the proper css unit. 
+- `as_value`: returns the inner value 
+
+```
+let px = CSSDimension::Px(200.0);
+let percent = CSSDimension::Percent(50.0);
+
+px.as_css_str(); // returns "200.0px"
+percent.as_css_str(); // returns "50.0%"
+
+px.as_value(); // returns 200.0
+percent.as_value(); // returns 50.0
 ```
