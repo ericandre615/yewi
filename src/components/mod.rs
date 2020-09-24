@@ -5,6 +5,7 @@ pub mod transition;
 pub mod access;
 pub mod form;
 pub mod table;
+pub mod messages;
 
 pub use inner_html::InnerHtml;
 
