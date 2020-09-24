@@ -1,0 +1,21 @@
+.error {
+    background: red;
+    color: white;
+    padding: .75em;
+    border-radius: 4px;
+    margin: .25em 0;
+}
+
+.error .error-message {
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+}
+
+.error .error-dismiss {
+    border: none;
+    background: none;
+    color: white;
+    float: right;
+    cursor: pointer;
+}

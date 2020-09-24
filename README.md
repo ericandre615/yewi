@@ -11,6 +11,7 @@ Stand alone working and runable examples for each component are listed under the
 - [`Access`](src/components/access.rs): A very simple component to make conditional rendering more declarative
 - [`Table`](src/components/table/): A data table that allows filtering/sorting (remotely)
 - [`InnerHtml`](src/components/inner_html.rs): A component that can take raw html and render it properly
+- [`ErrorMessage`](src/components/messages/error_message.rs): A component to display error messages. 
 
 #### `CSSTransition`
 Note that durations given here must match those the transition times in your `css`
@@ -203,6 +204,27 @@ fn view(&self) -> Html {
                 <h2>Headline</h2>
                 <p>Some inner html content</p>
             "#
+        />
+    }
+}
+```
+
+#### Messages
+##### ErrorMessage
+Several examples can be found in [`examples/messages`](examples/messages).
+- `error`: an `Option<String>` if `None` then no message is displayed. If `Some(String)` then the message is displayed.
+- `dismissible`: `bool` determines whether the message will have a dismiss button and can be dismissed. However, you can also implement this yourself.
+- `handle_dismiss`: `Callback<()>` called when `dismissible` message is `dismissed`. Internally it will be removed from display automatically. However, this
+callback can allow you to update your Error state/global state, or do other things on dismiss.
+
+```
+use yewi::components::messages::ErrorMessage;
+
+view(&self) -> Html {
+    html! {
+        <ErrorMessage
+            error=Some("Error Fetching Resource")
+            dismissible=true
         />
     }
 }
