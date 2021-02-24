@@ -10,9 +10,12 @@ use yew::prelude::{
     Callback,
 };
 
+use crate::utils::generate_unique_id;
+use crate::components::form::LabeledInput;
+
 #[derive(Properties, Clone, PartialEq)]
 pub struct CheckboxProps {
-    #[prop_or(String::new())]
+    #[prop_or(generate_unique_id())]
     pub id: String,
     #[prop_or(String::new())]
     pub name: String,
@@ -22,6 +25,8 @@ pub struct CheckboxProps {
     pub placeholder: String,
     #[prop_or(String::new())]
     pub class: String,
+    #[prop_or(String::new())]
+    pub label: String,
     #[prop_or(false)]
     pub checked: bool,
     #[prop_or(Callback::noop())]
@@ -76,18 +81,22 @@ impl Component for Checkbox {
         let id = self.props.id.clone();
         let name = self.props.name.clone();
         let value = self.props.value.clone();
+        let label = self.props.label.clone();
+        let label_id = self.props.id.clone();
         let classes = self.props.class.clone();
 
         html! {
-            <input
-                id=id
-                name=name
-                type="checkbox"
-                class=format!("yewi-checkbox {}", classes)
-                onclick=self.link.callback(|_| Msg::ToggleChecked)
-                checked={ self.checked }
-                value=value
-            />
+            <LabeledInput label=label id=label_id>
+                <input
+                    id=id
+                    name=name
+                    type="checkbox"
+                    class=format!("yewi-checkbox {}", classes)
+                    onclick=self.link.callback(|_| Msg::ToggleChecked)
+                    checked={ self.checked }
+                    value=value
+                />
+            </LabeledInput>
         }
     }
 }

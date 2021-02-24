@@ -8,11 +8,15 @@ use yew::prelude::{
     ChangeData,
     MouseEvent,
     Callback,
+    ChildrenWithProps,
 };
+
+use crate::utils::generate_unique_id;
+use crate::components::form::inputs::Radio;
 
 #[derive(Properties, Clone, PartialEq)]
 pub struct RadioGroupProps {
-    #[prop_or(String::new()]
+    #[prop_or(generate_unique_id())]
     pub id: String,
     pub name: String,
     #[prop_or(String::new())]
@@ -21,6 +25,8 @@ pub struct RadioGroupProps {
     pub checked: bool, // in this case if we use checked it needs to be the Radio button or value not a bool
     #[prop_or(Callback::noop())]
     pub handle_change: Callback<bool>,
+    #[prop_or_default()]
+    pub children: ChildrenWithProps<Radio>,
 }
 
 pub struct RadioGroup {
@@ -69,7 +75,7 @@ impl Component for RadioGroup {
 
     fn view(&self) -> Html {
         let children = self.props.children.clone();
-        let id = self.props.id;
+        let id = self.props.id.clone();
         let name = self.props.name.clone();
         let classes = self.props.class.clone();
 
@@ -78,7 +84,7 @@ impl Component for RadioGroup {
             <div id=id class=format!("yewi-radio-group {}", classes)>
                 {
                     for children.iter().map(|mut item| {
-                        item.name = name;
+                        item.props.name = name.clone();
                         item
                     })
                 }
@@ -90,7 +96,7 @@ impl Component for RadioGroup {
             //    onclick=self.link.callback(|_| Msg::ToggleChecked)
             //    checked={ self.checked }
             //    value=value
-            ///>
+            // //>
             </div>
         }
     }

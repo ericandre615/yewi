@@ -8,15 +8,17 @@ use yew::prelude::{
     ShouldRender,
 };
 
+use crate::utils::generate_unique_id;
+
 #[derive(Properties, Clone, Debug, PartialEq)]
 pub struct LabelProps {
     #[prop_or_default]
     pub children: Children,
-    #[prop_or(String::new())]
+    #[prop_or_default]
     pub label_for: String,
-    #[prop_or(String::new())]
+    #[prop_or(generate_unique_id())]
     pub id: String,
-    #[prop_or(String::new())]
+    #[prop_or_default]
     pub class: String,
 }
 

@@ -9,9 +9,12 @@ use yew::prelude::{
     Callback,
 };
 
+use crate::utils::generate_unique_id;
+use crate::components::form::LabeledInput;
+
 #[derive(Properties, Clone, Debug)]
 pub struct TextInputProps {
-    #[prop_or(String::new())]
+    #[prop_or(generate_unique_id())]
     pub id: String,
     #[prop_or(String::new())]
     pub name: String,
@@ -21,6 +24,8 @@ pub struct TextInputProps {
     pub value: String,
     #[prop_or(String::new())]
     pub placeholder: String,
+    #[prop_or(String::new())]
+    pub label: String,
     #[prop_or(String::new())]
     pub class: String,
     #[prop_or(Callback::noop())]
@@ -82,10 +87,12 @@ impl Component for TextInput {
         let name = self.props.name.clone();
         let placeholder = self.props.placeholder.clone();
         let classes = self.props.class.clone();
+        let label_id = self.props.id.clone();
+        let label = self.props.label.clone();
         let value = self.value.clone();
 
         html! {
-            <div>
+            <LabeledInput label=label id=label_id>
                 <input
                     type="text"
                     id=id
@@ -95,7 +102,7 @@ impl Component for TextInput {
                     value={ value }
                     placeholder={ placeholder }
                 />
-            </div>
+            </LabeledInput>
         }
     }
 }

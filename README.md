@@ -5,6 +5,12 @@ Collection of UI related components for use with the yew framework.
 
 Stand alone working and runable examples for each component are listed under the [`examples`](examples/README.md) directory.
 
+**NOTE**: _until the next version of yew (`0.18`) is released there is no great way to do optional html attributes.
+However, the components here allow for optional `id` which if present on an `html` element can not be empty (`""`) and have to be 
+unique. For this reason any component that currently accepts an optional `id` prop will by default if not given a value
+generate a `uuid` as the `id` attribute. This will be replaced by optional html attributes once that feature is released
+in yew_
+
 ### Components
 - [`Transition`](src/components/transition/): A basic transition component that tracks transition state and uses callback to emit those states
 - [`CSSTransition`](src/components/transition/css_transition.rs): An component utilizing the base `Transition` component that will add css classnames for transition states
@@ -12,6 +18,10 @@ Stand alone working and runable examples for each component are listed under the
 - [`Table`](src/components/table/): A data table that allows filtering/sorting (remotely)
 - [`InnerHtml`](src/components/inner_html.rs): A component that can take raw html and render it properly
 - [`ErrorMessage`](src/components/messages/error_message.rs): A component to display error messages. 
+- [`Form`](src/components/form/README.md) A set of form components including `Form` and `inputs`
+
+#### `form`
+See [`components::form` README.md](src/component/form/README.md) for more info.
 
 #### `CSSTransition`
 Note that durations given here must match those the transition times in your `css`
@@ -279,4 +289,10 @@ percent.as_css_str(); // returns "50.0%"
 px.as_value(); // returns 200.0
 percent.as_value(); // returns 50.0
 ```
+
+#### InputType
+See [`components::form::InputType`](src/components/form/input_type.rs) for more types.
+This is an `enum` with similar methods to `html::Tag` enum, but specific to more types of valid form inputs
+for example it includes all normal form type elements (from `html::Tag`) but goes deeper because html
+`input` can have different `type`s, including `password`, `email`, `color`, etc.
 

@@ -280,6 +280,14 @@ impl From<&str> for Tag {
     }
 }
 
+impl From<String> for Tag {
+    fn from(tag: String) -> Self {
+        let tag = tag.to_lowercase();
+
+        Tag::str_as_tag(&tag)
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;

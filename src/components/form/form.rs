@@ -15,6 +15,9 @@ use yew::services::{ConsoleService};
 
 use std::convert::TryFrom;
 
+use crate::utils::generate_unique_id;
+use crate::components::form::InputType;
+
 type SubmitEvent = FocusEvent;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -32,11 +35,13 @@ pub enum FormValue {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct FormItem {
+    kind: InputType,
     id: String,
     name: String,
-    value: FormValue,
+    value: String, // FormValue
     touched: bool,
     valid: bool,
+    checked: bool,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -48,7 +53,7 @@ pub struct FormState {
 pub struct FormProps {
     #[prop_or_default]
     pub children: Children,
-    #[prop_or(String::new())]
+    #[prop_or(generate_unique_id())]
     pub id: String,
     #[prop_or(String::new())]
     pub name: String,
@@ -65,7 +70,7 @@ pub struct FormProps {
     #[prop_or(Callback::noop())]
     pub handle_change: Callback<String>,
     #[prop_or(Callback::noop())]
-    pub handle_submit: Callback<SubmitEvent>, // SubmitDAta?
+    pub handle_submit: Callback<FormState>, // SubmitDAta?
 }
 
 pub struct Form {
@@ -98,14 +103,26 @@ impl Component for Form {
             FormMsg::Submit(event) => {
                 let form = event.target().unwrap().unchecked_into::<HtmlFormElement>();
                 let form_data = FormData::new_with_form(&form);
+                let mut form_state = FormState { inputs: Vec::new() };
+                ConsoleService::info(&format!("RawForm {:?}", form));
 
                 for i in 0..form.elements().length() {
                     let item = form.elements().item(i).unwrap();
                     let value = self.get_value(item.clone());
-                    ConsoleService::info(&format!("INPUT {:?}", value));
+                    let (input_name, input_value) = self.get_input(item.clone());
+                    let form_item = self.get_form_item(item.clone());
+                    ConsoleService::info(&format!("INPUT name: {:?} val: {:?}", input_name, input_value));
+                    //ConsoleService::info(&format!("INPUT {:?} - {:?}", item, value));
+                    match form_item {
+                        Some(item) => {
+                            ConsoleService::info(&format!("FormItem {:?}", item));
+                            form_state.inputs.push(item);
+                        },
+                        None => {},
+                    }
                 }
 
-                self.props.handle_submit.emit(event);
+                self.props.handle_submit.emit(form_state);
             },
         }
 
@@ -161,5 +178,29 @@ impl Form {
         }
 
         "".into()
+    }
+
+    fn get_input(&self, element: Element) -> (String, String) {
+        if let Ok(input) = element.dyn_into::<HtmlInputElement>() {
+            return (input.name().replace("-", "_"), input.value());
+        }
+
+        ("".into(), "".into())
+    }
+
+    fn get_form_item(&self, element: Element) -> Option<FormItem> {
+        if let Ok(input) = element.dyn_into::<HtmlInputElement>() {
+            return Some(FormItem {
+                kind: InputType::from(input.type_()),
+                id: input.id(),
+                name: input.name().replace("-", "_"),
+                value: input.value(),
+                touched: true,
+                valid: true,
+                checked: input.checked(),
+            });
+        }
+
+        None
     }
 }
