@@ -16,6 +16,8 @@ use yewi::components::form::{
     Label,
     inputs::{
         TextInput,
+        EmailInput,
+        PasswordInput,
         Checkbox,
         Radio,
         RadioGroup,
@@ -66,6 +68,8 @@ impl Component for App {
                     <TextInput id="my-input-id" name="my-input" placeholder="Enter Text" />
                     <TextInput id="label-input" name="label-input" placeholder="Labeled Input" label="Label My Input" />
 
+                    <EmailInput id="user-email" name="user-email" placeholder="example@emails.com" label="Email: " />
+                    <PasswordInput id="user-password" name="user-password" label="Password: " />
                     <Label label_for="my-checkbox-id">{ "Check it" }</Label>
                     <Checkbox id="my-checkbox-id" name="my-checkbox" value="CheckingIt" />
                     <Checkbox id="withed-label" name="better-checkbox" value="CheckItWithLabels" label="Label Check" />
