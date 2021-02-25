@@ -1,11 +1,11 @@
-use yew::prelude::{
+use yew::{
     Component,
     ComponentLink,
     Html,
     html,
     ShouldRender,
-    KeyboardEvent,
     Callback,
+    events::{MouseEvent, KeyboardEvent},
 };
 use yew::services::ConsoleService;
 
@@ -14,6 +14,7 @@ use yewi::components::form::{
     FormMethod,
     FormState,
     Label,
+    SubmitButton,
     inputs::{
         TextInput,
         EmailInput,
@@ -30,6 +31,7 @@ pub struct App {
 
 pub enum AppMsg {
     FormSubmit(FormState),
+    SubmitClicked(MouseEvent),
 }
 
 impl Component for App {
@@ -45,6 +47,11 @@ impl Component for App {
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
+            AppMsg::SubmitClicked(event) => {
+                ConsoleService::info(&format!("SubmitClicked..{:?}", event));
+                ConsoleService::info("What to do? Do we get both the form submit and click this way?");
+                ConsoleService::info("What happens if we preventDefault?");
+            },
             AppMsg::FormSubmit(form_data) => {
                 ConsoleService::info(&format!("FormDataState {:?}", form_data));
             }
@@ -77,7 +84,13 @@ impl Component for App {
                         <Radio id="mail" value="male" name="other-radio-omitted" />
                         <Radio id="femail" value="female" label="female" />
                     </RadioGroup>
-                    <button type="submit">{ "Submit" }</button>
+                    <SubmitButton
+                        id="form-submit"
+                        class="btn-submit"
+                        handle_click=self.link.callback(AppMsg::SubmitClicked)
+                    >
+                        { "Submit" }
+                    </SubmitButton>
                 </Form>
             </div>
         }
