@@ -21,7 +21,7 @@ in yew_
 - [`Form`](src/components/form/README.md) A set of form components including `Form` and `inputs`
 
 #### `form`
-See [`components::form` README.md](src/component/form/README.md) for more info.
+See [`components::form` README.md](src/components/form/README.md) for more info.
 
 #### `CSSTransition`
 Note that durations given here must match those the transition times in your `css`
