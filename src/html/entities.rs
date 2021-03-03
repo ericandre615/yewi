@@ -163,6 +163,78 @@ impl Entity {
     pub fn str_as_enum(entity: &str) -> Entity {
         match entity {
             _ if entity == "\u{00A9}" => Entity::Copyright,
+            _ if entity == "\u{00AE}" => Entity::Reg,
+            _ if entity == "\u{2122}" => Entity::Trade,
+            _ if entity == "\u{0040}" => Entity::Commat,
+            _ if entity == "\u{2606}" => Entity::Star,
+            _ if entity == "\u{2605}" => Entity::Starf,
+            _ if entity == "\u{266A}" => Entity::Sung,
+            _ if entity == "\u{266D}" => Entity::Flat,
+            _ if entity == "\u{266E}" => Entity::Natural,
+            _ if entity == "\u{266F}" => Entity::Sharp,
+            _ if entity == "\u{2713}" => Entity::Check,
+            _ if entity == "\u{2717}" => Entity::Cross,
+            _ if entity == "\u{0021}" => Entity::Excl,
+            _ if entity == "\u{0023}" => Entity::Num,
+            _ if entity == "\u{0026}" => Entity::Amp,
+            _ if entity == "\u{002A}" => Entity::Ast,
+            _ if entity == "\u{003F}" => Entity::Quest,
+            _ if entity == "\u{005E}" => Entity::Hat,
+            _ if entity == "\u{007B}" => Entity::Lbrace,
+            _ if entity == "\u{007D}" => Entity::Rbrace,
+            _ if entity == "\u{007E}" => Entity::Tilde,
+            _ if entity == "\u{02C6}" => Entity::Circ,
+            _ if entity == "\u{00A0}" => Entity::Nbsp,
+            _ if entity == "\u{2002}" => Entity::Ensp,
+            _ if entity == "\u{2003}" => Entity::Emsp,
+            _ if entity == "\u{00A1}" => Entity::Iexcl,
+            _ if entity == "\u{00B5}" => Entity::Micro,
+            _ if entity == "\u{00B6}" => Entity::Para,
+            _ if entity == "\u{00BF}" => Entity::Iquest,
+            _ if entity == "\u{2010}" => Entity::Hyphen,
+            _ if entity == "\u{2013}" => Entity::Ndash,
+            _ if entity == "\u{2014}" => Entity::Mdash,
+            _ if entity == "\u{2015}" => Entity::Horbar,
+            _ if entity == "\u{2022}" => Entity::Bull,
+            _ if entity == "\u{2041}" => Entity::Caret,
+            _ if entity == "\u{0022}" => Entity::Quot,
+            _ if entity == "\u{0027}" => Entity::Apos,
+            _ if entity == "\u{00AB}" => Entity::Laquo,
+            _ if entity == "\u{00BB}" => Entity::Raquo,
+            _ if entity == "\u{2039}" => Entity::Lsaquo,
+            _ if entity == "\u{203A}" => Entity::Rsaquo,
+            _ if entity == "\u{002B}" => Entity::Plus,
+            _ if entity == "\u{2212}" => Entity::Minus,
+            _ if entity == "\u{00D7}" => Entity::Times,
+            _ if entity == "\u{00F7}" => Entity::Divide,
+            _ if entity == "\u{003D}" => Entity::Equals,
+            _ if entity == "\u{2260}" => Entity::Ne,
+            _ if entity == "\u{00B1}" => Entity::Plusmn,
+            _ if entity == "\u{00AC}" => Entity::Not,
+            _ if entity == "\u{003C}" => Entity::Lt,
+            _ if entity == "\u{003E}" => Entity::Gt,
+            _ if entity == "\u{00B0}" => Entity::Deg,
+            _ if entity == "\u{221A}" => Entity::Radic,
+            _ if entity == "\u{221E}" => Entity::Infin,
+            _ if entity == "\u{03B1}" => Entity::Alpha,
+            _ if entity == "\u{03B2}" => Entity::Beta,
+            _ if entity == "\u{03B3}" => Entity::Gamma,
+            _ if entity == "\u{03B4}" => Entity::Delta,
+            _ if entity == "\u{03B5}" => Entity::Epsilon,
+            _ if entity == "\u{03B6}" => Entity::Zeta,
+            _ if entity == "\u{03B7}" => Entity::Eta,
+            _ if entity == "\u{03B8}" => Entity::Theta,
+            _ if entity == "\u{03B9}" => Entity::Iota,
+            _ if entity == "\u{03BA}" => Entity::Kappa,
+            _ if entity == "\u{03BB}" => Entity::Lambda,
+            _ if entity == "\u{03BC}" => Entity::Mu,
+            _ if entity == "\u{03BD}" => Entity::Nu,
+            _ if entity == "\u{03BE}" => Entity::Xi,
+            _ if entity == "\u{03BF}" => Entity::Omicron,
+            _ if entity == "\u{03C0}" => Entity::Pi,
+            _ if entity == "\u{03C6}" => Entity::Phi,
+            _ if entity == "\u{03C9}" => Entity::Omega,
+
             _ if entity.is_empty() => Entity::Empty,
             _ => Entity::Empty,
         }
@@ -182,6 +254,12 @@ impl From<&str> for Entity {
 impl From<String> for Entity {
     fn from(entity: String) -> Self {
         Entity::str_as_enum(&entity)
+    }
+}
+
+impl std::fmt::Display for Entity {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.as_unicode_str())
     }
 }
 
@@ -271,11 +349,46 @@ mod test {
     }
 
     #[test]
+    fn defaults_to_empty() {
+        let default = Entity::default();
+        let expected = Entity::Empty;
+
+        assert_eq!(expected, default);
+    }
+
+    #[test]
+    fn unrecognized_from_is_empty() {
+        let actual = Entity::from("nothing");
+        let expected = Entity::Empty;
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn implements_from() {
+        let actual_from_code = Entity::from("\u{00A9}");
+        let actual_from_literal = Entity::from("©");
+        let expected = Entity::Copyright;
+
+        assert_eq!(expected, actual_from_code);
+        assert_eq!(expected, actual_from_literal);
+    }
+
+    #[test]
     fn entity_as_unicode_str() {
         let copyright = Entity::Copyright;
 
         assert_eq!(copyright.as_unicode_str(), "\u{00A9}");
         assert_eq!(copyright.as_uni_str(), "\u{00A9}");
+    }
+
+    #[test]
+    fn entity_works_in_format_str() {
+        let trade = Entity::Trade;
+        let expected_str = "Entity works in format str ™";
+        let actual_str = format!("Entity works in format str {}", trade);
+
+        assert_eq!(expected_str, actual_str);
     }
 
     #[test]
@@ -286,6 +399,18 @@ mod test {
             let (entity, unicode) = p;
 
             assert_eq!(entity.as_unicode_str(), unicode);
+        }
+    }
+
+    #[test]
+    fn entity_from_str_exhaustive() {
+        let pairs = get_entities();
+
+        for p in pairs {
+            let (entity, unicode_str) = p;
+            let from_str = Entity::from(unicode_str);
+
+            assert_eq!(from_str, entity);
         }
     }
 }

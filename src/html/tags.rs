@@ -272,6 +272,12 @@ impl Default for Tag {
     fn default() -> Self { Tag::Div }
 }
 
+impl std::fmt::Display for Tag {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.as_html_str())
+    }
+}
+
 impl From<&str> for Tag {
     fn from(tag: &str) -> Self {
         let tag = tag.to_lowercase();
@@ -325,6 +331,15 @@ mod test {
 
         assert_eq!(default, Tag::Div);
         assert_ne!(default, Tag::Section);
+    }
+
+    #[test]
+    fn tag_works_in_format_str() {
+        let section = Tag::Section;
+        let expected_str = "Html Tag formatted as a <section></section>";
+        let actual_str = format!("Html Tag formatted as a <{}></{}>", section, section);
+
+        assert_eq!(expected_str, actual_str);
     }
 
     #[test]
