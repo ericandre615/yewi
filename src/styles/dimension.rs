@@ -14,6 +14,8 @@ pub enum CSSDimension {
     Empty,
 }
 
+type CSSValuePair = (f32, String);
+
 impl CSSDimension {
     pub fn as_css_str(&self) -> String {
         let val = match &self {
@@ -63,6 +65,45 @@ impl CSSDimension {
             CSSDimension::Empty => CSSDimension::Empty,
         }
     }
+
+    fn split_into_pair(val: &str) -> CSSValuePair {
+        let mut num_str: String = String::new();
+        let mut value_str: String = String::new();
+        let decimal: char = ".".chars().next().unwrap();
+
+        for c in val.chars() {
+            if c.is_digit(10) || c == decimal {
+                num_str.push(c);
+            }
+
+            if !c.is_digit(10) && c != decimal {
+                value_str.push(c);
+            }
+        }
+
+        let num = num_str.parse::<f32>().unwrap();
+
+        (num, value_str)
+    }
+
+    pub fn as_css_dimension(value: &str) -> CSSDimension {
+        let (num, value_type) = CSSDimension::split_into_pair(value);
+
+        match value_type {
+            _ if value_type == "px" => CSSDimension::Px(num),
+            _ if value_type == "em" => CSSDimension::Em(num),
+            _ if value_type == "cm" => CSSDimension::Cm(num),
+            _ if value_type == "mm" => CSSDimension::Mm(num),
+            _ if value_type == "in" => CSSDimension::In(num),
+            _ if value_type == "pt" => CSSDimension::Pt(num),
+            _ if value_type == "pc" => CSSDimension::Pc(num),
+            _ if value_type == "%" => CSSDimension::Percent(num),
+            _ if value_type == "rem" => CSSDimension::Rem(num),
+
+            _ if value_type.is_empty() => CSSDimension::Empty,
+            _ => CSSDimension::Empty,
+        }
+    }
 }
 
 impl Default for CSSDimension {
@@ -74,6 +115,18 @@ impl Default for CSSDimension {
 impl std::fmt::Display for CSSDimension {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.as_css_str())
+    }
+}
+
+impl From<String> for CSSDimension {
+    fn from(value: String) -> CSSDimension {
+        CSSDimension::as_css_dimension(&value)
+    }
+}
+
+impl From<&str> for CSSDimension {
+    fn from(value: &str) -> CSSDimension {
+        CSSDimension::as_css_dimension(&value)
     }
 }
 
@@ -196,25 +249,6 @@ mod test {
 
     #[test]
     fn exhaustive_css_as_str() {
-        //let px = CSSDimension::Px(20.0);
-        //let percent = CSSDimension::Percent(20.0);
-        //let em = CSSDimension::Em(20.0);
-        //let cm = CSSDimension::Cm(20.0);
-        //let mm = CSSDimension::Mm(20.0);
-        //let inch = CSSDimension::In(20.0);
-        //let pt = CSSDimension::Pt(20.0);
-        //let pc = CSSDimension::Pc(20.0);
-        //let rem = CSSDimension::Rem(20.0);
-
-        //assert_eq!(px.as_css_str(), "20.0px");
-        //assert_eq!(percent.as_css_str(), "20.0%");
-        //assert_eq!(em.as_css_str(), "20.0em");
-        //assert_eq!(cm.as_css_str(), "20.0cm");
-        //assert_eq!(mm.as_css_str(), "20.0mm");
-        //assert_eq!(inch.as_css_str(), "20.0in");
-        //assert_eq!(pt.as_css_str(), "20.0pt");
-        //assert_eq!(pc.as_css_str(), "20.0pc");
-        //assert_eq!(rem.as_css_str(), "20.0rem");
         let pairs = get_css_dimensions();
 
         for p in pairs {
@@ -251,6 +285,39 @@ mod test {
 
         assert_eq!(px.as_value(), 20.0);
         assert_eq!(percent.as_value(), 40.0);
+    }
+
+    #[test]
+    fn exhaustive_css_value() {
+        let pairs = get_css_dimensions();
+
+        for p in pairs {
+            let (dimension, dim_value, _) = p;
+
+            assert_eq!(dimension.as_value(), dim_value);
+        }
+    }
+
+    #[test]
+    fn css_from_strings() {
+        let value_str = "250.0px";
+        let css_dimension = CSSDimension::from(value_str);
+
+        assert_eq!(CSSDimension::Px(250.0), css_dimension);
+    }
+
+    #[test]
+    fn exhaustive_from_strings() {
+        let pairs = get_css_dimensions();
+
+        for p in pairs {
+            let (dimension, value, value_type) = p;
+            let value_str = format!("{}{}", value, value_type);
+            let actual_dimension = CSSDimension::from(value_str);
+            let expected_dimension = dimension;
+
+            assert_eq!(expected_dimension, actual_dimension);
+        }
     }
 }
 
