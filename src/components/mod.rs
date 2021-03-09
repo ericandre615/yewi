@@ -7,6 +7,7 @@ pub mod form;
 pub mod table;
 pub mod messages;
 pub mod ui;
+pub mod routes;
 
 pub use inner_html::InnerHtml;
 
