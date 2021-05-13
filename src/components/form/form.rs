@@ -35,18 +35,18 @@ pub enum FormValue {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct FormItem {
-    kind: InputType,
-    id: String,
-    name: String,
-    value: String, // FormValue
-    touched: bool,
-    valid: bool,
-    checked: bool,
+    pub kind: InputType,
+    pub id: String,
+    pub name: String,
+    pub value: String, // FormValue
+    pub touched: bool,
+    pub valid: bool,
+    pub checked: bool,
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct FormState {
-    inputs: Vec<FormItem>
+    pub inputs: Vec<FormItem>
 }
 
 #[derive(Properties, Clone, Debug, PartialEq)]
